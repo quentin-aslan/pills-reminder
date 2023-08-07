@@ -1,85 +1,49 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div v-if="isBrowserCompatible">
+    <header>
+      <div class="wrapper">
+        <nav>
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/settings">Settings</RouterLink>
+        </nav>
+      </div>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <RouterView v-if="userData" />
+    <RegisterForm v-else />
+  </div>
+  <div v-else>
+    <h1>Sorry, your browser is not compatible with this app</h1>
+  </div>
 </template>
 
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import {onMounted, ref} from "vue";
+import {useNotifications} from "@/composable/use-notifications";
+import {useUser} from "@/composable/use-user";
+import RegisterForm from "@/components/RegisterForm.vue";
+
+const { checkBrowserCompatibility } = useNotifications()
+const { userData, getUserData } = useUser()
+const isBrowserCompatible = ref(false)
+
+onMounted(async () => {
+  // Check if the browser support service worker and Notification API. If not, display a message to the user
+  try {
+    checkBrowserCompatibility()
+    isBrowserCompatible.value = true
+  } catch (e) {
+    alert(e)
+    isBrowserCompatible.value = false
+  }
+
+  getUserData()
+
+})
+
+</script>
+
+
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
 </style>
