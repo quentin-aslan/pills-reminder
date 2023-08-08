@@ -4,8 +4,9 @@ import {ref} from "vue";
 import {BACKEND_URL} from "@/const";
 
 const LOCAL_STORAGE_KEY = 'pills-reminder'
-const userData = ref<User | null>(null)
 const { subscribeUserToPush } = useNotifications()
+
+const userData:Ref<User> = ref<User | null>(null)
 
 export function useUser() {
     const setUsername = async (username: string) => {
@@ -19,8 +20,6 @@ export function useUser() {
                 subscription: pushSubscription,
                 pillsHistory: []
             }
-
-            console.log(payload)
 
             const response = await fetch(`${BACKEND_URL}/subscribe`, {
                 method: 'post',

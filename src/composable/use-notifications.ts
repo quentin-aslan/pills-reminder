@@ -44,8 +44,6 @@ export function useNotifications() {
         try {
             const serviceWorker = await serviceWorkerRegistration()
 
-
-
             const public_key = await getVapidPublicKey()
             const subscribeOptions = {
                 userVisibleOnly: true, // TODO: Understand the purpose of this property ?!

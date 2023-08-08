@@ -1,7 +1,7 @@
 <template>
   <div>
     <HistoryTable v-if="isPillOfTheDayTaken" />
-    <ButtonChoice />
+    <ButtonChoice v-else />
   </div>
 </template>
 <script setup lang="ts">

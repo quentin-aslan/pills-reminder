@@ -1,27 +1,33 @@
-import {computed, ref} from "vue";
-import { type Ref } from "vue";
+import {computed} from "vue";
+import {useUser} from "@/composable/use-user";
+import {BACKEND_URL} from "@/const";
 
-type PillHistory = {
-    date: Date,
-    notifications: number,
-    taken: boolean
-}
-
-const pillsHistory: Ref<PillHistory[]> = ref<PillHistory[]>([])
+const { userData } = useUser()
 
 export function usePills () {
 
     const isPillOfTheDayTaken = computed(() => {
-        return pillsHistory.value.some((pill) => (getDayMonthYear(pill.date) === getDayMonthYear(new Date())) && pill.taken)
+        if(!userData) return false
+        return userData.value.pillsHistory.some((pill) => isToday(new Date(pill.date)) && pill.taken)
     })
 
-    const pillTaken = () => {
-        const getTodayPills = pillsHistory.value.find((row) => getDayMonthYear(row.date) === getDayMonthYear(new Date()))
-        pillsHistory.value.push({
-            date: new Date(),
-            notifications: getTodayPills?.notifications ?? 0,
-            taken: true
-        })
+    const pillTaken = async () => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/pillStatus`, {
+                method: 'post',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify({
+                    username: userData.value.name,
+                    taken: true
+                })
+            })
+
+            if(!response.ok) throw new Error('Pill status update failed')
+            userData.value = await response.json()
+            return true
+        } catch (e) {
+            return alert(e)
+        }
     }
 
     // Utils
@@ -33,6 +39,13 @@ export function usePills () {
         return `${day}/${month}/${year}`
     }
 
+    const isToday = (someDate: Date) => {
+        const today = new Date()
+        return someDate.getDate() === today.getDate() &&
+            someDate.getMonth() === today.getMonth() &&
+            someDate.getFullYear() === today.getFullYear()
+    }
+
     const getHourMinutes = (date: Date) => {
         const hour = date.getHours()
         const minutes = date.getMinutes()
@@ -41,7 +54,6 @@ export function usePills () {
     }
 
     return {
-        pillsHistory,
         getDayMonthYear,
         getHourMinutes,
         isPillOfTheDayTaken,

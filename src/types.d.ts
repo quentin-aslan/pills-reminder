@@ -12,3 +12,8 @@ export type User = {
     subscription: Subscription,
     pillsHistory: PillHistory[]
 }
+export type PillHistory = {
+    date: Date,
+    notifications: number,
+    taken: boolean
+}

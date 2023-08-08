@@ -1,15 +1,24 @@
 <template>
   <div class="button_container">
-    <button @click="pillTaken">I took my pills</button>
-    <button>Remind my latter</button>
+    <button :disabled="isPillTakenDisabled" @click="_pillTaken">I took my pills</button>
   </div>
 </template>
 
 <script setup lang="ts">
 
 import {usePills} from "@/composable/use-pills";
+import {ref} from "vue";
 
 const { pillTaken } = usePills()
+
+const isPillTakenDisabled = ref(false)
+
+const _pillTaken = async () => {
+  isPillTakenDisabled.value = true
+  await pillTaken()
+  isPillTakenDisabled.value = false
+}
+
 </script>
 
 <style scoped>
