@@ -1,31 +1,27 @@
 <template>
-  <div v-if="isBrowserCompatible">
-    <header>
-      <div class="wrapper">
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/settings">Settings</RouterLink>
-        </nav>
-      </div>
-    </header>
-
-    <RouterView v-if="userData" />
+  <div class="container" v-if="isBrowserCompatible">
+    <div class="card" v-if="userData">
+      <HistoryTable v-if="isPillOfTheDayTaken" />
+      <ButtonChoice v-else />
+    </div>
     <RegisterForm v-else />
   </div>
-  <div v-else>
-    <h1>Sorry, your browser is not compatible with this app</h1>
-  </div>
+
+  <h1 v-else>Sorry, your browser is not compatible with this app</h1>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
 import {onMounted, ref} from "vue";
 import {useNotifications} from "@/composable/use-notifications";
 import {useUser} from "@/composable/use-user";
 import RegisterForm from "@/components/RegisterForm.vue";
+import ButtonChoice from "@/components/ButtonChoice.vue";
+import HistoryTable from "@/components/HistoryTable.vue";
+import {usePills} from "@/composable/use-pills";
 
 const { checkBrowserCompatibility } = useNotifications()
 const { userData, getUserData } = useUser()
+const { isPillOfTheDayTaken } =  usePills()
 const isBrowserCompatible = ref(false)
 
 onMounted(async () => {

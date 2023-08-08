@@ -6,7 +6,7 @@
         <label for="username">Username</label>
         <input type="text" id="username" v-model="username" />
       </div>
-      <button @click.stop.prevent="continueRegister">Continue</button>
+      <button class="button" @click.stop.prevent="continueRegister">Continue</button>
     </form>
   </div>
 </template>
