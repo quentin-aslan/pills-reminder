@@ -1,6 +1,5 @@
 import {computed} from "vue";
 import {useUser} from "@/composable/use-user";
-import {BACKEND_URL} from "@/const";
 import type {PillHistory} from "@/types";
 
 const { userData } = useUser()
@@ -14,7 +13,7 @@ export function usePills () {
 
     const pillTaken = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/pillStatus`, {
+            const response = await fetch(`/api/pillStatus`, {
                 method: 'post',
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify({

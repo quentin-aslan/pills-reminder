@@ -1,7 +1,6 @@
 import type {Subscription, User} from "@/types";
 import {useNotifications} from "@/composable/use-notifications";
 import {type Ref, ref} from "vue";
-import {BACKEND_URL} from "@/const";
 
 const LOCAL_STORAGE_KEY = 'pills-reminder'
 const { subscribeUserToPush } = useNotifications()
@@ -23,7 +22,7 @@ export function useUser() {
 
             if (!payload.name || !payload.subscription) throw new Error('An error occurred, name and subscription are required to subscribe new user.')
 
-            const response = await fetch(`${BACKEND_URL}/subscribe`, {
+            const response = await fetch(`/api/subscribe`, {
                 method: 'post',
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -44,7 +43,7 @@ export function useUser() {
             const username = localStorage.getItem(`${LOCAL_STORAGE_KEY}-username`)
             if(!username) return null
 
-            const response = await fetch(`${BACKEND_URL}/getUser?username=${username}`)
+            const response = await fetch(`/api/getUser?username=${username}`)
             if (response.ok) {
                 const datas = await response.json()
                 if(datas) userData.value = datas

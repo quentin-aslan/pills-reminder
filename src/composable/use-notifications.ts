@@ -1,5 +1,3 @@
-import {BACKEND_URL} from "@/const";
-
 export function useNotifications() {
     // The purpose of this function is to take a base64-encoded string and convert it to a Uint8Array
     const urlBase64ToUint8Array = (base64String: string) => {
@@ -19,7 +17,7 @@ export function useNotifications() {
 
     // ask Vapid Public Key to the backend, for receive push API
     const getVapidPublicKey = async () => {
-        const response = await fetch(`${BACKEND_URL}/vapidPublic`)
+        const response = await fetch(`/api/vapidPublic`)
         const data = await response.json()
         return data.vapid_public_key
     }
