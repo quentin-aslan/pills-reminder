@@ -13,7 +13,7 @@ export function usePills () {
 
     const pillTaken = async () => {
         try {
-            const response = await fetch(`/api/pillStatus`, {
+            const response = await fetch(`${BACKEND_URL}/api/pillStatus`, {
                 method: 'post',
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify({

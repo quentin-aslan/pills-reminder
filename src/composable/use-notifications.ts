@@ -17,7 +17,7 @@ export function useNotifications() {
 
     // ask Vapid Public Key to the backend, for receive push API
     const getVapidPublicKey = async () => {
-        const response = await fetch(`/api/vapidPublic`)
+        const response = await fetch(`${BACKEND_URL}/api/vapidPublic`)
         const data = await response.json()
         return data.vapid_public_key
     }
