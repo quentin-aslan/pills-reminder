@@ -1,6 +1,7 @@
 import {computed} from "vue";
 import {useUser} from "@/composable/use-user";
 import {BACKEND_URL} from "@/const";
+import type {PillHistory} from "@/types";
 
 const { userData } = useUser()
 
@@ -8,7 +9,7 @@ export function usePills () {
 
     const isPillOfTheDayTaken = computed(() => {
         if(!userData) return false
-        return userData.value.pillsHistory.some((pill) => isToday(new Date(pill.date)) && pill.taken)
+        return userData.value?.pillsHistory.some((pillHistory: PillHistory) => isToday(new Date(pillHistory.date)) && pillHistory.taken)
     })
 
     const pillTaken = async () => {
@@ -17,7 +18,7 @@ export function usePills () {
                 method: 'post',
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify({
-                    username: userData.value.name,
+                    username: userData.value?.name,
                     taken: true
                 })
             })

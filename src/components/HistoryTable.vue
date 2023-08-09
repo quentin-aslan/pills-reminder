@@ -8,7 +8,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="pillHistory of userData.pillsHistory">
+      <tr v-for="pillHistory of userData?.pillsHistory">
         <td>{{ getDayMonthYear(new Date(pillHistory.date)) }}</td>
         <td>{{ getHourMinutes(new Date(pillHistory.date)) }}</td>
         <td>{{pillHistory.notifications }}</td>

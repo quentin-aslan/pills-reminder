@@ -1,12 +1,12 @@
-import type {User} from "@/types";
+import type {Subscription, User} from "@/types";
 import {useNotifications} from "@/composable/use-notifications";
-import {ref} from "vue";
+import {type Ref, ref} from "vue";
 import {BACKEND_URL} from "@/const";
 
 const LOCAL_STORAGE_KEY = 'pills-reminder'
 const { subscribeUserToPush } = useNotifications()
 
-const userData:Ref<User> = ref<User | null>(null)
+const userData:Ref<User | null> = ref<User | null>(null)
 
 export function useUser() {
     const setUsername = async (username: string) => {
@@ -17,9 +17,11 @@ export function useUser() {
 
             const payload = {
                 name: username,
-                subscription: pushSubscription,
+                subscription: (pushSubscription) ? pushSubscription as unknown as Subscription : null,
                 pillsHistory: []
             }
+
+            if (!payload.name || !payload.subscription) throw new Error('An error occurred, name and subscription are required to subscribe new user.')
 
             const response = await fetch(`${BACKEND_URL}/subscribe`, {
                 method: 'post',
@@ -31,24 +33,26 @@ export function useUser() {
 
             localStorage.setItem(`${LOCAL_STORAGE_KEY}-username`, username);
 
-            userData.value = payload
+            userData.value = payload as User
         } catch (e) {
             return alert(e)
         }
     }
 
-    const getUserData: User = async (): Promise<User> => {
+    const getUserData = async (): Promise<User | null> => {
         try {
             const username = localStorage.getItem(`${LOCAL_STORAGE_KEY}-username`)
-            if(!username) return undefined
+            if(!username) return null
 
             const response = await fetch(`${BACKEND_URL}/getUser?username=${username}`)
             if (response.ok) {
-                userData.value = await response.json()
+                const datas = await response.json()
+                if(datas) userData.value = datas
             }
             return userData.value
         } catch (e) {
-            return alert(e)
+            alert(e)
+            return null
         }
     }
 

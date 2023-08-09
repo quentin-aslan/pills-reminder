@@ -2,7 +2,7 @@ import {BACKEND_URL} from "@/const";
 
 export function useNotifications() {
     // The purpose of this function is to take a base64-encoded string and convert it to a Uint8Array
-    const urlBase64ToUint8Array = (base64String) => {
+    const urlBase64ToUint8Array = (base64String: string) => {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding)
             .replace(/\-/g, '+')
@@ -53,7 +53,7 @@ export function useNotifications() {
             return await serviceWorker.pushManager.subscribe(subscribeOptions)
         } catch (e) {
             console.error(e)
-            return undefined
+            return null
         }
     }
 
