@@ -1,6 +1,7 @@
 import {computed} from "vue";
 import {useUser} from "@/composable/use-user";
 import type {PillHistory} from "@/types";
+import {BACKEND_URL} from "@/const";
 
 const { userData } = useUser()
 
