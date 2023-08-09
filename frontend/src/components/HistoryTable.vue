@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { usePills } from "@/composable/use-pills";
-import {useUser} from "@/composable/use-user";
+import { usePills } from "../composable/use-pills";
+import {useUser} from "../composable/use-user";
 const { userData } = useUser()
 const { getDayMonthYear, getHourMinutes } = usePills()
 </script>

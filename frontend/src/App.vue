@@ -12,12 +12,12 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {useNotifications} from "@/composable/use-notifications";
-import {useUser} from "@/composable/use-user";
-import RegisterForm from "@/components/RegisterForm.vue";
-import ButtonChoice from "@/components/ButtonChoice.vue";
-import HistoryTable from "@/components/HistoryTable.vue";
-import {usePills} from "@/composable/use-pills";
+import {useNotifications} from "./composable/use-notifications";
+import {useUser} from "./composable/use-user";
+import RegisterForm from "./components/RegisterForm.vue";
+import ButtonChoice from "./components/ButtonChoice.vue";
+import HistoryTable from "./components/HistoryTable.vue";
+import {usePills} from "./composable/use-pills";
 
 const { checkBrowserCompatibility } = useNotifications()
 const { userData, getUserData } = useUser()

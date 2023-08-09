@@ -1,4 +1,4 @@
-import {BACKEND_URL} from "@/const";
+import {BACKEND_URL} from "../const";
 
 export function useNotifications() {
     // The purpose of this function is to take a base64-encoded string and convert it to a Uint8Array

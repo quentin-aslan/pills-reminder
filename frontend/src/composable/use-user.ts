@@ -1,7 +1,7 @@
-import type {Subscription, User} from "@/types";
-import {useNotifications} from "@/composable/use-notifications";
+import type {Subscription, User} from "../types";
+import {useNotifications} from "./use-notifications";
 import {type Ref, ref} from "vue";
-import {BACKEND_URL} from "@/const";
+import {BACKEND_URL} from "../const";
 
 const LOCAL_STORAGE_KEY = 'pills-reminder'
 const { subscribeUserToPush } = useNotifications()

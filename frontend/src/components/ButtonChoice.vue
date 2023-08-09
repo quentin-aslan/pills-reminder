@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 
-import {usePills} from "@/composable/use-pills";
+import {usePills} from "../composable/use-pills";
 import {ref} from "vue";
 
 const { pillTaken } = usePills()

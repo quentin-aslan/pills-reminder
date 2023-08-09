@@ -13,8 +13,8 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {useNotifications} from "@/composable/use-notifications";
-import {useUser} from "@/composable/use-user";
+import {useNotifications} from "../composable/use-notifications";
+import {useUser} from "../composable/use-user";
 
 const { askNotificationPermission } = useNotifications()
 const { setUsername } = useUser()
