@@ -3,7 +3,7 @@ import webPush from "web-push";
 import {getDb, getNYCFromUTC, isToday} from "./utils.js";
 
 
-const INTERVAL_CHECK_PILLS_STATUS = 10000 // 5 mins
+const INTERVAL_CHECK_PILLS_STATUS = 300000 // 5 mins
 const NOTIFICATION_MAX = 10
 
 const DEFAULT_REMINDER_TIME = '8:15'
