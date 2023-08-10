@@ -56,3 +56,9 @@ export const isToday = (someDate: Date) => {
         someDate.getMonth() === today.getMonth() &&
         someDate.getFullYear() === today.getFullYear()
 }
+
+export const getNYCFromUTC = () => {
+    const nowInUTC = new Date();
+    const nowInNY = new Date(nowInUTC.toLocaleString("en-US", {timeZone: "America/New_York"}));
+    return nowInNY
+}

@@ -1,19 +1,22 @@
 import {Notification, PillStatus, User} from "./types";
 import webPush from "web-push";
-import {getDb, isToday} from "./utils.js";
+import {getDb, getNYCFromUTC, isToday} from "./utils.js";
 
 
-const INTERVAL_CHECK_PILLS_STATUS = 300000 // 5 mins
+const INTERVAL_CHECK_PILLS_STATUS = 10000 // 5 mins
 const NOTIFICATION_MAX = 10
 
-const DEFAULT_REMINDER_TIME = '15:00'
-
+const DEFAULT_REMINDER_TIME = '8:15'
 const isReminderTimePassed = (reminderTime: string) => {
-    const [hour, min] = reminderTime.split(':')
-    const now = new Date()
-    const reminderDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(hour), Number(min))
-    return now > reminderDate
+    const [hour, min] = reminderTime.split(':');
+    const nowInNY = getNYCFromUTC() // TODO: Gerer les notifications en fonction de l'heure de l'utilisateur
+
+    // Définissez l'heure de rappel basée sur l'heure actuelle de New York
+    const reminderDate = new Date(nowInNY.getFullYear(), nowInNY.getMonth(), nowInNY.getDate(), Number(hour), Number(min));
+
+    return nowInNY > reminderDate;
 }
+
 
 const checkPillStatus = async () => {
     console.log('Checking pill status ...', new Date().toString())
@@ -78,6 +81,7 @@ export const updatePillStatus = async (datas: PillStatus): Promise<User> => {
         pillHistoryIndex = user.pillsHistory.length -1
     }
 
+    user.pillsHistory[pillHistoryIndex].date = getNYCFromUTC()
     user.pillsHistory[pillHistoryIndex].taken = datas.taken
     await db.write()
 
