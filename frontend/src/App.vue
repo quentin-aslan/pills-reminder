@@ -36,6 +36,8 @@ onMounted(async () => {
 
   getUserData()
 
+  console.log('isPWAInstalled', isPWAInstalled.value)
+
 })
 
 </script>

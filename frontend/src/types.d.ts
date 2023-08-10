@@ -9,7 +9,7 @@ type Subscription = {
 
 export type User = {
     name: string,
-    subscription: Subscription,
+    subscriptions: Subscription[],
     pillsHistory: PillHistory[]
 }
 export type PillHistory = {

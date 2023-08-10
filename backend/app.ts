@@ -27,7 +27,13 @@ const saveUserInDb = async (userData: User) => {
 
         db.data.users.push(userData)
         await db.write()
+    } else {
+        console.log('utilisateur existe')
+        if(userDb.subscriptions?.length > 0) userDb.subscriptions = [...userDb.subscriptions, ...userData.subscriptions]
+        console.log(userDb.subscriptions)
+        await db.write()
     }
+
 }
 const getServer = () => {
     const certs = getCertificate()
@@ -65,8 +71,14 @@ app.post('/api/subscribe', async (req: any, res: any) => {
         const data: User = req.body;
 
         // Check if subscription have all keys
-        if (!data.name || !data.subscription || !data.subscription.endpoint || !data.subscription.keys) {
+        if (!data.name || !data.subscriptions || !Array.isArray(data.subscriptions)) {
             return res.status(400).json({ message: 'Username, endpoint and keys properties are mandatory' });
+        }
+
+        for (const subscription of data.subscriptions) {
+            if (!subscription.endpoint || !subscription.keys) {
+                return res.status(400).json({ message: 'Endpoint and keys properties are mandatory' });
+            }
         }
 
         await saveUserInDb(data)
@@ -80,20 +92,21 @@ app.post('/api/subscribe', async (req: any, res: any) => {
 app.post('/api/sendNotification', async (req: Request, res: Response) => {
     try {
         // get notification from params
-        const notificationPayload: Notification = req.body;
+        const notificationPayload: Notification & { username: string } = req.body;
 
-        if(!notificationPayload.title || !notificationPayload.body) {
-            return res.status(400).json({message: 'Notification must have a title and a body'})
+        if(!notificationPayload.title || !notificationPayload.body || !notificationPayload.username) {
+            return res.status(400).json({message: 'Username is required and Notification must have a title and a body'})
         }
 
         const db = await getDb()
-        const users = db.data.users
+        const user = db.data.users.find(user => user.name === notificationPayload.username)
+        if (!user) return res.status(400).json({message: 'User not found'})
 
-        for (const user of users) {
+        for (const subscription of user.subscriptions) {
             try {
                 await webPush.sendNotification(
-                    user.subscription,
-                    JSON.stringify({ notification: notificationPayload })
+                    subscription,
+                    JSON.stringify({notification: notificationPayload})
                 );
             } catch (e) {
                 console.log("Error when sending notification to " + user.name)

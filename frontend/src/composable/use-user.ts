@@ -17,14 +17,11 @@ export function useUser() {
 
             const payload = {
                 name: username,
-                subscription: (pushSubscription) ? pushSubscription as unknown as Subscription : null,
+                subscriptions: (pushSubscription) ? [pushSubscription] as unknown as Subscription[] : null,
                 pillsHistory: []
             }
 
-            console.log(pushSubscription)
-            console.log(payload)
-
-            if (!payload.name || !payload.subscription) throw new Error('An error occurred, name and subscription are required to subscribe new user.')
+            if (!payload.name || !payload.subscriptions) throw new Error('An error occurred, name and subscription are required to subscribe new user.')
 
             const response = await fetch(`${BACKEND_URL}/api/subscribe`, {
                 method: 'post',

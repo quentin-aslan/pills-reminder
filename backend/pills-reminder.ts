@@ -40,22 +40,28 @@ const checkPillStatus = async () => {
             continue
         }
 
+        console.log("Sending notification to " + user.name)
+
         const notificationPayload: Notification = {
             title: 'Pill reminder',
             body: 'Did you take your pill today ?'
         }
 
-        try {
-            console.log("Sending notification to " + user.name)
-            await webPush.sendNotification(
-                user.subscription,
-                JSON.stringify({ notification: notificationPayload })
-            );
+        let notificationSent = 0
 
-            user.pillsHistory[pillHistoryIndex].notifications++
-        } catch (e) {
-            console.log("Error when sending notification to " + user.name)
+        for (const subscription of user.subscriptions) {
+            try {
+                await webPush.sendNotification(
+                    subscription,
+                    JSON.stringify({notification: notificationPayload})
+                );
+                notificationSent++
+            } catch (e) {
+                console.log("Error when sending notification to "+ user.name + ' | ' + subscription.endpoint)
+            }
         }
+
+        if (notificationSent > 0) user.pillsHistory[pillHistoryIndex].notifications++
     }
     await db.write()
 }
