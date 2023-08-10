@@ -1,6 +1,7 @@
 .idea
 node_modules
 dist
+db.json
 frontend/node_modules
 frontend/package-lock.json
 backend/node_modules

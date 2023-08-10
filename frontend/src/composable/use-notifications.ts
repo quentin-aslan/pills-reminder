@@ -29,6 +29,10 @@ export function useNotifications() {
         if (!('PushManager' in window)) throw new Error('Push notifications are not supported by this browser')
     }
 
+    const isPWA = () => {
+        return window.matchMedia('(display-mode: standalone)').matches
+    }
+
     const askNotificationPermission = async () => {
         const permissionResult = await Notification.requestPermission()
         return permissionResult === 'granted';
@@ -61,6 +65,7 @@ export function useNotifications() {
         askNotificationPermission,
         getVapidPublicKey,
         checkBrowserCompatibility,
-        subscribeUserToPush
+        subscribeUserToPush,
+        isPWA
     }
 }

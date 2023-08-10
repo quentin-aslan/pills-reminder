@@ -15,7 +15,6 @@
       </tr>
       </tbody>
     </table>
-
 </template>
 
 <script setup lang="ts">
