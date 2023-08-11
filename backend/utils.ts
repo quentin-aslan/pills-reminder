@@ -51,7 +51,7 @@ export const getCertificate = () => {
 }
 
 export const isToday = (someDate: Date) => {
-    const today = new Date()
+    const today = getNYDate()
     return someDate.getDate() === today.getDate() &&
         someDate.getMonth() === today.getMonth() &&
         someDate.getFullYear() === today.getFullYear()

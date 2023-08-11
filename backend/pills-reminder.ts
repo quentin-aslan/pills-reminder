@@ -82,7 +82,7 @@ export const updatePillStatus = async (datas: PillStatus): Promise<User> => {
 
     if(pillHistoryIndex === -1) {
         console.log('There is no pill history for today, creating one ...', user.name)
-        user.pillsHistory.push({date: new Date(), taken: datas.taken, notifications: 0})
+        user.pillsHistory.push({date: getNYDate(), taken: datas.taken, notifications: 0})
         pillHistoryIndex = user.pillsHistory.length -1
     }
 
