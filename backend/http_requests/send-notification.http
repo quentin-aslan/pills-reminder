@@ -1,7 +1,8 @@
-POST https://quentinaslan.fr:4051/sendNotification
+POST https://pills-reminder.quentinaslan.fr/api/sendNotification
 Content-Type: application/json
 
 {
+  "username": "Quentin",
   "title": "Title of the notification",
   "body": "Content of the notification"
 }
