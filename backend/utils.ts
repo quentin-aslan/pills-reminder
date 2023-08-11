@@ -57,8 +57,17 @@ export const isToday = (someDate: Date) => {
         someDate.getFullYear() === today.getFullYear()
 }
 
-export const getNYCFromUTC = () => {
+export const getNYDate = () => {
     const nowInUTC = new Date();
-    const nowInNY = new Date(nowInUTC.toLocaleString("en-US", {timeZone: "America/New_York"}));
-    return nowInNY
+    const offset = getNYCOffset(nowInUTC);
+    nowInUTC.setHours(nowInUTC.getHours() - offset);
+    return nowInUTC;
+}
+
+const getNYCOffset = (date: Date) => {
+    const jan = new Date(date.getFullYear(), 0, 1);
+    const jul = new Date(date.getFullYear(), 6, 1);
+    const stdOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+
+    return date.getTimezoneOffset() === stdOffset ? 5 : 4;
 }
