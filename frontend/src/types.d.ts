@@ -17,3 +17,8 @@ export type PillHistory = {
     notifications: number,
     taken: boolean
 }
+
+export type ReminderTime = {
+    hour: string,
+    timezone: string
+}

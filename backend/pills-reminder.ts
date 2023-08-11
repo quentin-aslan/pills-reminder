@@ -1,19 +1,30 @@
 import {Notification, PillStatus, User} from "./types";
 import webPush from "web-push";
 import {getDb, getNYDate, isToday} from "./utils.js";
+import {ReminderTime} from "pills-reminder-frontend/src/types";
 
 
 const INTERVAL_CHECK_PILLS_STATUS = 300000 // 5 mins
 const NOTIFICATION_MAX = 10
 
-const DEFAULT_REMINDER_TIME = '8:15'
-const isReminderTimePassed = (reminderTime: string) => {
-    const [hour, min] = reminderTime.split(':');
-    const nowInNY = getNYDate() // TODO: Gerer les notifications en fonction de l'heure de l'utilisateur
+const DEFAULT_REMINDER_TIME = {
+    hour: '8:15',
+    timezone: 'America/New_York'
+}
+const isReminderTimePassed = (reminderTime: ReminderTime) => {
+    const [hour, min] = reminderTime.hour.split(':')
 
-    // Définissez l'heure de rappel basée sur l'heure actuelle de New York
-    const reminderDate = new Date(nowInNY.getFullYear(), nowInNY.getMonth(), nowInNY.getDate(), Number(hour), Number(min));
-    return nowInNY > reminderDate;
+    const reminderTimeFromTimezone = new Date().toLocaleString('en-US', {timeZone: reminderTime.timezone})
+    const nowInReminderTimezone = new Date(reminderTimeFromTimezone)
+    const reminderDate = new Date(
+        nowInReminderTimezone.getFullYear(),
+        nowInReminderTimezone.getMonth(),
+        nowInReminderTimezone.getDate(),
+        Number(hour),
+        Number(min)
+    )
+
+    return nowInReminderTimezone > reminderDate;
 }
 
 
