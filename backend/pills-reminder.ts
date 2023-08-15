@@ -1,7 +1,7 @@
-import {Notification, PillStatus, User} from "./types";
+import {Notification, PillStatus, User} from "./types.js";
 import webPush from "web-push";
 import {getDb, isToday} from "./utils.js";
-import {getNowInTimezone} from "./user";
+import {getNowInTimezone} from "./user.js";
 
 
 const INTERVAL_CHECK_PILLS_STATUS = 300000 // 5 mins

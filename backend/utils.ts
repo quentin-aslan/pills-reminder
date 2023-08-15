@@ -1,9 +1,9 @@
 import fs from "fs";
 import {JSONFile} from "lowdb/node";
-import {Database, VapidKeys} from "./types";
+import {Database, VapidKeys} from "./types.js";
 import {Low} from "lowdb";
 import webPush from "web-push";
-import {getNowInTimezone} from "./user";
+import {getNowInTimezone} from "./user.js";
 
 let CURRENT_DB: Low<Database> | undefined = undefined
 export const getDb = async () => {
