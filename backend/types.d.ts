@@ -19,6 +19,8 @@ export type VapidKeys = {
 
 export type User = {
     name: string,
+    timezone: string,
+    reminderTime: string, // hh:mm
     subscriptions: Subscription[],
     pillsHistory: PillHistory[]
 }

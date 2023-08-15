@@ -9,16 +9,14 @@ type Subscription = {
 
 export type User = {
     name: string,
+    timezone: string,
+    reminderTime: string, // hh:mm
     subscriptions: Subscription[],
     pillsHistory: PillHistory[]
 }
+
 export type PillHistory = {
     date: Date,
     notifications: number,
     taken: boolean
-}
-
-export type ReminderTime = {
-    hour: string,
-    timezone: string
 }

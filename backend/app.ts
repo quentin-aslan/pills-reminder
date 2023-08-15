@@ -24,13 +24,12 @@ const saveUserInDb = async (userData: User) => {
 
     if (!userDb) {
         if(!userData.pillsHistory) userData.pillsHistory = []
-
         db.data.users.push(userData)
         await db.write()
     } else {
-        console.log('utilisateur existe')
+        userDb.timezone = userData.timezone
+        userDb.reminderTime = userData.reminderTime
         if(userDb.subscriptions?.length > 0) userDb.subscriptions = [...userDb.subscriptions, ...userData.subscriptions]
-        console.log(userDb.subscriptions)
         await db.write()
     }
 
@@ -71,8 +70,8 @@ app.post('/api/subscribe', async (req: any, res: any) => {
         const data: User = req.body;
 
         // Check if subscription have all keys
-        if (!data.name || !data.subscriptions || !Array.isArray(data.subscriptions)) {
-            return res.status(400).json({ message: 'Username, endpoint and keys properties are mandatory' });
+        if (!data.name || !data.timezone || !data.subscriptions || !Array.isArray(data.subscriptions)) {
+            return res.status(400).json({ message: 'Name, timezone, endpoint and keys properties are mandatory' });
         }
 
         for (const subscription of data.subscriptions) {

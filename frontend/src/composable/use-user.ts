@@ -17,6 +17,8 @@ export function useUser() {
 
             const payload = {
                 name: username,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                reminderTime: '08:15',
                 subscriptions: (pushSubscription) ? [pushSubscription] as unknown as Subscription[] : null,
                 pillsHistory: []
             }

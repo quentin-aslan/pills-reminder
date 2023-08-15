@@ -3,6 +3,7 @@ import {JSONFile} from "lowdb/node";
 import {Database, VapidKeys} from "./types";
 import {Low} from "lowdb";
 import webPush from "web-push";
+import {getNowInTimezone} from "./user";
 
 let CURRENT_DB: Low<Database> | undefined = undefined
 export const getDb = async () => {
@@ -50,24 +51,10 @@ export const getCertificate = () => {
     }
 }
 
-export const isToday = (someDate: Date) => {
-    const today = getNYDate()
+export const isToday = (timezone: string, someDate: Date) => {
+    const nowInTimezone = getNowInTimezone(timezone)
+    const today = new Date(nowInTimezone)
     return someDate.getDate() === today.getDate() &&
         someDate.getMonth() === today.getMonth() &&
         someDate.getFullYear() === today.getFullYear()
-}
-
-export const getNYDate = () => {
-    const nowInUTC = new Date();
-    const offset = getNYCOffset(nowInUTC);
-    nowInUTC.setHours(nowInUTC.getHours() - offset);
-    return nowInUTC;
-}
-
-const getNYCOffset = (date: Date) => {
-    const jan = new Date(date.getFullYear(), 0, 1);
-    const jul = new Date(date.getFullYear(), 6, 1);
-    const stdOffset = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-
-    return date.getTimezoneOffset() === stdOffset ? 5 : 4;
 }

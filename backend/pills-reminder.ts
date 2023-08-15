@@ -1,21 +1,23 @@
 import {Notification, PillStatus, User} from "./types";
 import webPush from "web-push";
-import {getDb, getNYDate, isToday} from "./utils.js";
-import {ReminderTime} from "pills-reminder-frontend/src/types";
+import {getDb, isToday} from "./utils.js";
+import {getNowInTimezone} from "./user";
 
 
 const INTERVAL_CHECK_PILLS_STATUS = 300000 // 5 mins
 const NOTIFICATION_MAX = 10
 
-const DEFAULT_REMINDER_TIME = {
-    hour: '8:15',
-    timezone: 'America/New_York'
-}
-const isReminderTimePassed = (reminderTime: ReminderTime) => {
-    const [hour, min] = reminderTime.hour.split(':')
+const isReminderTimePassed = (user: User) => {
+    user.timezone = 'America/New_York'
+    user.reminderTime = '8:15'
+    if(!user.timezone || !user.reminderTime) throw new Error('isReminderTimePassed : User has no timezone or reminderTime')
 
-    const reminderTimeFromTimezone = new Date().toLocaleString('en-US', {timeZone: reminderTime.timezone})
+    const [hour, min] = user.reminderTime.split(':')
+
+    // Get current time in reminder timezone
+    const reminderTimeFromTimezone = new Date().toLocaleString('en-US', {timeZone: user.timezone})
     const nowInReminderTimezone = new Date(reminderTimeFromTimezone)
+
     const reminderDate = new Date(
         nowInReminderTimezone.getFullYear(),
         nowInReminderTimezone.getMonth(),
@@ -29,51 +31,56 @@ const isReminderTimePassed = (reminderTime: ReminderTime) => {
 
 
 const checkPillStatus = async () => {
-    console.log('Checking pill status ...', getNYDate().toString())
-    const db = await getDb()
-    const users = db.data.users
+    try {
+        const db = await getDb()
+        const users = db.data.users
 
-    for (const user of users) {
-        let pillHistoryIndex = user?.pillsHistory.findIndex(pillDatas => isToday(new Date(pillDatas.date)))
-        // If no pill history for today, create one
-        if (pillHistoryIndex === -1) {
-            console.log('There is no pill history for today, creating one ...', user.name)
-            user.pillsHistory.push({date: getNYDate(), taken: false, notifications: 0})
-            pillHistoryIndex = user.pillsHistory.length -1
-        }
-
-        // If pill not taken and less than NOTIFICATION_MAX, send one
-        if (user.pillsHistory[pillHistoryIndex].taken ||
-            user.pillsHistory[pillHistoryIndex].notifications === NOTIFICATION_MAX ||
-            !isReminderTimePassed(DEFAULT_REMINDER_TIME)) {
-            console.log('Pill already taken, max notifications reached or reminder time not passed', user.name)
-            continue
-        }
-
-        console.log("Sending notification to " + user.name)
-
-        const notificationPayload: Notification = {
-            title: 'Pill reminder',
-            body: 'Did you take your pill today ?'
-        }
-
-        let notificationSent = 0
-
-        for (const subscription of user.subscriptions) {
-            try {
-                await webPush.sendNotification(
-                    subscription,
-                    JSON.stringify({notification: notificationPayload})
-                );
-                notificationSent++
-            } catch (e) {
-                console.log("Error when sending notification to "+ user.name + ' | ' + subscription.endpoint)
+        for (const user of users) {
+            console.log(`Checking pill status for ${user.name} at ${getNowInTimezone(user.timezone).toString()}`)
+            let pillHistoryIndex = user?.pillsHistory.findIndex(pillDatas => isToday(user.timezone, new Date(pillDatas.date)))
+            // If no pill history for today, create one
+            if (pillHistoryIndex === -1) {
+                console.log('There is no pill history for today, creating one ...', user.name)
+                user.pillsHistory.push({date: getNowInTimezone(user.timezone), taken: false, notifications: 0})
+                pillHistoryIndex = user.pillsHistory.length -1
             }
-        }
 
-        if (notificationSent > 0) user.pillsHistory[pillHistoryIndex].notifications++
+            // If pill not taken and less than NOTIFICATION_MAX, send one
+            if (user.pillsHistory[pillHistoryIndex].taken ||
+                user.pillsHistory[pillHistoryIndex].notifications === NOTIFICATION_MAX ||
+                !isReminderTimePassed(user)) {
+                console.log('Pill already taken, max notifications reached or reminder time not passed', user.name)
+                continue
+            }
+
+            console.log("Sending notification to " + user.name)
+
+            const notificationPayload: Notification = {
+                title: 'Pill reminder',
+                body: 'Did you take your pill today ?'
+            }
+
+            let notificationSent = 0
+
+            for (const subscription of user.subscriptions) {
+                try {
+                    await webPush.sendNotification(
+                        subscription,
+                        JSON.stringify({notification: notificationPayload})
+                    );
+                    notificationSent++
+                } catch (e) {
+                    console.log("Error when sending notification to "+ user.name + ' | ' + subscription.endpoint)
+                }
+            }
+
+            if (notificationSent > 0) user.pillsHistory[pillHistoryIndex].notifications++
+        }
+        await db.write()
+    } catch (e) {
+        console.log('Error when checking pill status')
+        console.log(e)
     }
-    await db.write()
 }
 
 export const initCheckPillsStatus = () => {
@@ -88,19 +95,18 @@ export const updatePillStatus = async (datas: PillStatus): Promise<User> => {
     // Found the user
     const user = db.data.users.find(user => user.name === datas.username)
     if (!user) throw new Error('User not found')
-    let pillHistoryIndex = user?.pillsHistory.findIndex(pillDatas => isToday(new Date(pillDatas.date)))
+    let pillHistoryIndex = user?.pillsHistory.findIndex(pillDatas => isToday(user.timezone, new Date(pillDatas.date)))
 
 
     if(pillHistoryIndex === -1) {
         console.log('There is no pill history for today, creating one ...', user.name)
-        user.pillsHistory.push({date: getNYDate(), taken: datas.taken, notifications: 0})
-        pillHistoryIndex = user.pillsHistory.length -1
+        user.pillsHistory.push({date: getNowInTimezone(user.timezone), taken: datas.taken, notifications: 0})
+    } else {
+        user.pillsHistory[pillHistoryIndex].date = getNowInTimezone(user.timezone)
+        user.pillsHistory[pillHistoryIndex].taken = datas.taken
     }
 
-    user.pillsHistory[pillHistoryIndex].date = getNYDate()
-    user.pillsHistory[pillHistoryIndex].taken = datas.taken
     await db.write()
 
     return user
 }
-
