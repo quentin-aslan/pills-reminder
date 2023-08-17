@@ -3,7 +3,7 @@ import {JSONFile} from "lowdb/node";
 import {Database, VapidKeys} from "./types.js";
 import {Low} from "lowdb";
 import webPush from "web-push";
-import {getNowInTimezone} from "./user.js";
+import {DateTime} from "luxon";
 
 let CURRENT_DB: Low<Database> | undefined = undefined
 export const getDb = async () => {
@@ -51,10 +51,9 @@ export const getCertificate = () => {
     }
 }
 
-export const isToday = (timezone: string, someDate: Date) => {
-    const nowInTimezone = getNowInTimezone(timezone)
-    const today = new Date(nowInTimezone)
-    return someDate.getDate() === today.getDate() &&
-        someDate.getMonth() === today.getMonth() &&
-        someDate.getFullYear() === today.getFullYear()
-}
+export const isToday = (timezone: string, someDate: DateTime): boolean => {
+    const nowInTimezone = DateTime.now().setZone(timezone);
+    const dateInTimezone = someDate.setZone(timezone);
+
+    return nowInTimezone.hasSame(dateInTimezone, 'day');
+};

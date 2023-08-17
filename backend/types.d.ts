@@ -25,17 +25,18 @@ export type User = {
     pillsHistory: PillHistory[]
 }
 
+export type PillHistory = {
+    dateISO: string,
+    notifications: number,
+    taken: boolean
+}
+
 export type Notification = {
     title: string;
     body: string;
     icon?: string;
 }
 
-export type PillHistory = {
-    date: Date,
-    notifications: number,
-    taken: boolean
-}
 
 type PillStatus = {
     username: string,

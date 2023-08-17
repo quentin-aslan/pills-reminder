@@ -7,9 +7,10 @@ const { userData } = useUser()
 
 export function usePills () {
 
+    // TODO: Handle that on the backendside
     const isPillOfTheDayTaken = computed(() => {
         if(!userData) return false
-        return userData.value?.pillsHistory.some((pillHistory: PillHistory) => isToday(new Date(pillHistory.date)) && pillHistory.taken)
+        return userData.value?.pillsHistory.some((pillHistory: PillHistory) => isToday(new Date(pillHistory.dateISO)) && pillHistory.taken)
     })
 
     const pillTaken = async () => {

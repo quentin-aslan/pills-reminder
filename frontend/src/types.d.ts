@@ -16,7 +16,7 @@ export type User = {
 }
 
 export type PillHistory = {
-    date: Date,
+    dateISO: Date,
     notifications: number,
     taken: boolean
 }
