@@ -1,23 +1,27 @@
 <template>
   <div class="button_container">
-    <button :disabled="isPillTakenDisabled" @click="_pillTaken">I took my pills</button>
+    <button :disabled="isDisable" @click="togglePillStatus">{{ contentText }}</button>
   </div>
 </template>
 
 <script setup lang="ts">
 
 import {usePills} from "../composable/use-pills";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 
-const { pillTaken } = usePills()
+const { updatePillStatus, isPillOfTheDayTaken } = usePills()
 
-const isPillTakenDisabled = ref(false)
+const isDisable = ref(false)
 
-const _pillTaken = async () => {
-  isPillTakenDisabled.value = true
-  await pillTaken()
-  isPillTakenDisabled.value = false
+const togglePillStatus = async () => {
+  isDisable.value = true
+  await updatePillStatus(!isPillOfTheDayTaken.value)
+  isDisable.value = false
 }
+
+const contentText = computed(() => {
+  return isPillOfTheDayTaken.value ? "I didn't take my pills" :  'I took my pills'
+})
 
 </script>
 

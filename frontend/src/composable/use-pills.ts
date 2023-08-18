@@ -13,14 +13,14 @@ export function usePills () {
         return userData.value?.pillsHistory.some((pillHistory: PillHistory) => isToday(new Date(pillHistory.dateISO)) && pillHistory.taken)
     })
 
-    const pillTaken = async () => {
+    const updatePillStatus = async (taken: boolean) => {
         try {
             const response = await fetch(`${BACKEND_URL}/api/pillStatus`, {
                 method: 'post',
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify({
                     username: userData.value?.name,
-                    taken: true
+                    taken
                 })
             })
 
@@ -59,6 +59,6 @@ export function usePills () {
         getDayMonthYear,
         getHourMinutes,
         isPillOfTheDayTaken,
-        pillTaken
+        updatePillStatus
     }
 }

@@ -123,7 +123,7 @@ app.post('/api/pillStatus', async (req: any, res: any) => {
     try {
         const pillStatus: PillStatus = req.body;
 
-        if (!pillStatus.username || !pillStatus.taken) {
+        if (!pillStatus.username || pillStatus.taken === undefined) {
             return res.status(400).json({ message: 'Username or taken properties missed' });
         }
 
