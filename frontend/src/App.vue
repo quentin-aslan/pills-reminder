@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="!isPWAInstalled">
+  <div class="container" v-if="isPWAInstalled">
     <div class="card" v-if="userData">
       <HistoryTable v-if="isPillOfTheDayTaken" />
       <ButtonChoice />
