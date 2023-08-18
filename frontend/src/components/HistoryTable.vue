@@ -4,14 +4,12 @@
       <tr>
         <th>Date</th>
         <th>Time</th>
-        <th>Notifications sent</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="pillHistory of userData?.pillsHistory">
         <td>{{ getDayMonthYear(new Date(pillHistory.dateISO)) }}</td>
         <td>{{ getHourMinutes(new Date(pillHistory.dateISO)) }}</td>
-        <td>{{pillHistory.notifications }}</td>
       </tr>
       </tbody>
     </table>
