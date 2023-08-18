@@ -3,9 +3,9 @@
     <div class="card" v-if="userData">
       <HistoryTable v-if="isPillOfTheDayTaken" />
       <ButtonChoice />
-      <RandomPicture />
     </div>
     <RegisterForm v-else />
+    <RandomPicture />
   </div>
   <HowInstallPWA v-else />
 </template>
@@ -39,7 +39,6 @@ onMounted(async () => {
   getUserData()
 
   console.log('isPWAInstalled', isPWAInstalled.value)
-
 })
 
 </script>
