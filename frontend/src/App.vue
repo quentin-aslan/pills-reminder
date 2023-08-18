@@ -3,6 +3,7 @@
     <div class="card" v-if="userData">
       <HistoryTable v-if="isPillOfTheDayTaken" />
       <ButtonChoice />
+      <RandomPicture />
     </div>
     <RegisterForm v-else />
   </div>
@@ -18,6 +19,7 @@ import ButtonChoice from "./components/ButtonChoice.vue";
 import HistoryTable from "./components/HistoryTable.vue";
 import {usePills} from "./composable/use-pills";
 import HowInstallPWA from "./components/HowInstallPWA.vue";
+import RandomPicture from "./components/RandomPicture.vue";
 
 const { isPWA, checkBrowserCompatibility } = useNotifications()
 const { userData, getUserData } = useUser()
