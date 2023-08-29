@@ -152,6 +152,17 @@ app.get('/api/getUser', async (req: any, res: any) => {
     }
 })
 
+app.get('/api/getUsernames', async (req: any, res: any) => {
+    try {
+        const db = await getDb()
+        const usernames = db.data.users.map(user => user.name)
+
+        return res.status(200).json(usernames);
+    } catch (e) {
+        return res.status(500).json({ message: 'Error when getting all usernames.' });
+    }
+})
+
 // Redirect all the other routes to Vue app
 app.get('*', (req, res) => {
     res.sendFile(join(__dirname, '../frontend/index.html'));
